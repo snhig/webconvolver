@@ -1,0 +1,72 @@
+/* hint hover and buttons */
+#ir_about {
+    display: none;
+}
+
+#ir_hint_button:hover #ir_about {
+    display: inline;
+    width: 50%;
+}
+
+#ir_hint_button:hover {
+    border: 2px solid white;
+    padding: 2%;
+}
+
+#ir_hint_button {
+    display: block;
+}
+
+#wav_about {
+    display: none;
+}
+
+#wav_hint_button:hover #wav_about {
+    display: inline;
+    width: 50%;
+    padding: 1%;
+}
+
+#wav_hint_button:hover {
+    border: 2px solid white;
+    padding: 2%;
+}
+
+#wav_hint_button {
+    display: block;
+}
+
+/* other */
+#about {
+    margin-left: 10%;
+    margin-right: 10%;
+    text-shadow: -1px -1px 2px #000,
+    1px -1px 2px #000,
+    -1px 1px 2px #000,
+    1px 1px 2px #000;
+}
+
+.welcome {
+    background-color: black;
+    margin-left: 20%;
+    margin-right: 20%;
+    margin-top: 10%;
+    padding: 2%;
+}
+
+body {
+    background-image: url("../imgs/red_spect.png");
+    background-attachment: fixed;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    font-family: "Andale Mono";
+    color: white;
+}
+
+#upload {
+    background-color: indianred;
+    color: white;
+    padding: 1%;
+    margin-left: 10%;
+    margin-right: 10%;
+}
