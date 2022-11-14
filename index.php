@@ -18,7 +18,7 @@
 <div id="upload">
     <fieldset>
         <legend>Upload</legend>
-        <form>
+        <form action="convolver.php" method="post" enctype="multipart/form-data">
             <label id="ir_label" class="hint">Impulse Response: <input type="file" name="ir"></label>
             <div id="ir_hint_button">What is an impusle response? [...]
                 <div id="ir_about">

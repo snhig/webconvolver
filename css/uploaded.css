@@ -75,7 +75,20 @@ h2 {
     text-align: center;
 }
 
-audio {
-    font-family: inherit;
-    margin: 20%;
+.audio_box {
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.audio_box audio {
+    margin: 0 auto;
+    display: table;
+}
+
+.error_ {
+    color: red;
+    text-align: center;
 }
