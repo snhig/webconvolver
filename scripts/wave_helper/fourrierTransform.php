@@ -74,7 +74,7 @@ function Fourier($input, $isign)
 function padZeros($arr, $k)
 {
     $zero_buffer = array_fill(0, $k - count($arr), 0);
-    echo "New array length: " . (count($zero_buffer) + count($arr)) . "\n";
+//    echo "New array length: " . (count($zero_buffer) + count($arr)) . "\n";
     return array_merge($arr, $zero_buffer);
 
 }
@@ -82,7 +82,7 @@ function padZeros($arr, $k)
 function linearConvolution($arr1, $arr2)
 {
     if (count($arr1) != count($arr2)) {
-        echo "ARRAYS CAN NOT BE CONVOLVED< DIFF LENGTH \n";
+//        echo "ARRAYS CAN NOT BE CONVOLVED< DIFF LENGTH \n";
         return array(-1, -1);
     } else {
         $result = array();
@@ -116,4 +116,125 @@ function fftConvolution($x, $h)
     return $convolved_signal;
 
 
+}
+
+function write_waveform($filename, $input, $reduction)
+{
+//    $input = [
+//        [175, 1000],
+//        [350, 1000],
+//        [500, 1000],
+//        [750, 1000],
+//        [1000, 1000]
+//    ];
+
+//Path to output file
+    $filePath = $filename;
+
+//Open a handle to our file in write mode, truncate the file if it exists
+    $fileHandle = fopen($filePath, 'w');
+
+// Calculate variable dependent fields
+    $channels = 1; //Mono
+    $bitDepth = 8; //8bit
+    $sampleRate = (int)(44100 / $reduction); //CD quality
+    $blockAlign = ($channels * ($bitDepth / 8));
+    $averageBytesPerSecond = $sampleRate * $blockAlign;
+
+    /*
+     * Header chunk
+     * dwFileLength will be calculated at the end, based upon the length of the audio data
+     */
+    $header = [
+        'sGroupID' => 'RIFF',
+        'dwFileLength' => 0,
+        'sRiffType' => 'WAVE'
+    ];
+
+    /*
+     * Format chunk
+     */
+    $fmtChunk = [
+        'sGroupID' => 'fmt',
+        'dwChunkSize' => 16,
+        'wFormatTag' => 1,
+        'wChannels' => $channels,
+        'dwSamplesPerSec' => $sampleRate,
+        'dwAvgBytesPerSec' => $averageBytesPerSecond,
+        'wBlockAlign' => $blockAlign,
+        'dwBitsPerSample' => $bitDepth
+    ];
+
+    /*
+     * Map all fields to pack flags
+     * WAV format uses little-endian byte order
+     */
+    $fieldFormatMap = [
+        'sGroupID' => 'A4',
+        'dwFileLength' => 'V',
+        'sRiffType' => 'A4',
+        'dwChunkSize' => 'V',
+        'wFormatTag' => 'v',
+        'wChannels' => 'v',
+        'dwSamplesPerSec' => 'V',
+        'dwAvgBytesPerSec' => 'V',
+        'wBlockAlign' => 'v',
+        'dwBitsPerSample' => 'v'
+    ];
+
+    $dwFileLength = 0;
+    foreach ($header as $currKey => $currValue) { // keep track of write values for file length in header
+        if (!array_key_exists($currKey, $fieldFormatMap)) {
+            die('Unrecognized field ' . $currKey);
+        }
+
+        $currPackFlag = $fieldFormatMap[$currKey];
+        $currOutput = pack($currPackFlag, $currValue);
+        $dwFileLength += fwrite($fileHandle, $currOutput);
+    }
+
+    foreach ($fmtChunk as $currKey => $currValue) {
+        if (!array_key_exists($currKey, $fieldFormatMap)) {
+            die('Unrecognized field ' . $currKey);
+        }
+        $currPackFlag = $fieldFormatMap[$currKey];
+        $currOutput = pack($currPackFlag, $currValue);
+        $dwFileLength += fwrite($fileHandle, $currOutput);
+    }
+
+    // overwrite chunk size
+    $dataChunk = [
+        'sGroupID' => 'data',
+        'dwChunkSize' => 0
+    ];
+    $dwFileLength += fwrite($fileHandle, pack($fieldFormatMap['sGroupID'], $dataChunk['sGroupID'])); // group
+    $dataChunkSizePosition = $dwFileLength;//chunk size position
+    $dwFileLength += fwrite($fileHandle, pack($fieldFormatMap['dwChunkSize'], $dataChunk['dwChunkSize'])); // write chunk
+
+    /*
+        8-bit audio: -128 to 127 (because of 2’s complement)
+     */
+    $maxAmplitude = 127;
+
+//Loop through input and write amplitudes
+    foreach ($input as $currAmp) {
+        $norm_amp = normalize($currAmp, -1, 1);
+        $curreBytesWritten = fwrite($fileHandle, pack('c', $norm_amp));
+        $dataChunk['dwChunkSize'] += $curreBytesWritten;
+//        echo "norm val: $norm_amp \n";
+    }
+
+    fseek($fileHandle, 4); // write correct chunk size
+    fwrite($fileHandle, pack($fieldFormatMap['dwFileLength'], ($dwFileLength - 8)));
+
+//Seek to our dwChunkSize and overwrite it with our final value
+    fseek($fileHandle, $dataChunkSizePosition);
+    fwrite($fileHandle, pack($fieldFormatMap['dwChunkSize'], $dataChunk['dwChunkSize']));
+    fclose($fileHandle);
+}
+
+function normalize($value, $min, $max)
+{
+    $normalized = ($value - $min) / ($max - $min);
+    return $normalized;
 }
