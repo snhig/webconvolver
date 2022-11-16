@@ -92,3 +92,8 @@ h2 {
     color: red;
     text-align: center;
 }
+
+#tester {
+    width: 600px;
+    height: 250px;
+}
