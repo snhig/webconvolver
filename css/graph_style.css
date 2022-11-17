@@ -73,6 +73,10 @@ body {
 
 h2 {
     text-align: center;
+    text-shadow: -1px -1px 2px #000,
+    1px -1px 2px #000,
+    -1px 1px 2px #000,
+    1px 1px 2px #000;
 }
 
 .audio_box {
@@ -93,7 +97,9 @@ h2 {
     text-align: center;
 }
 
-#tester {
-    width: 600px;
-    height: 250px;
+.wavgraph {
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-bottom: 4%;
 }
+

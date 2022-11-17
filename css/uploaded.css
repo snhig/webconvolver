@@ -92,3 +92,8 @@ h2 {
     color: red;
     text-align: center;
 }
+
+form {
+    width: 50vw;
+    margin-left: 25vw;
+}

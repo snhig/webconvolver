@@ -47,9 +47,13 @@ file_put_contents("../wav_data.json", $json);
 
 <body>
 <h1 class="welcome">VIEW</h1>
+<div class="audio_box">
+    <h2>Impulse Response</h2>
+    <div class="wavgraph" id="ir_graph"></div>
+    <h2>Sample File</h2>
+    <div class="wavgraph" id="sm_graph"></div>
+</div>
 
-<div class="wavgraph" id="ir_graph"></div>
-<div class="wavgraph" id="sm_graph"></div>
 <script>
 
     fetch("../wav_data.json")
@@ -60,7 +64,12 @@ file_put_contents("../wav_data.json", $json);
             log_data(data);
         });
 
+
     function log_data(data) {
+        var layout = {
+            plot_bgcolor: "rbg(0,0,0)",
+            paper_bgcolor: "rgb(0,0,0)"
+        };
         console.log(data);
         let ir_xvals = data.ir_data.length;
         let ir_yvals = data.ir_data;
@@ -71,17 +80,11 @@ file_put_contents("../wav_data.json", $json);
         Plotly.newPlot(ir_graph, [{
             x: ir_xvals,
             y: ir_yvals
-        }], {
-
-            margin: {t: 0}
-        });
+        }], layout);
         Plotly.newPlot(sm_graph, [{
             x: sm_xvals,
             y: sm_yvals
-        }], {
-
-            margin: {t: 0}
-        });
+        }], layout);
 
     }
 

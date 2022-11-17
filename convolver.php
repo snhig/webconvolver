@@ -27,7 +27,11 @@ move_uploaded_file($_FILES["wav"]["tmp_name"], $sample_path);
     <audio src=<?= $ir_path ?> controls="true"></audio>
     <h2 class="file_title"><?= $sample_name ?></h2>
     <audio src=<?= $sample_path ?> controls="true"></audio>
+    <form action="scripts/read_samples.php">
+        <button type="submit" value="CONVOLVE!">CONVOLVE</button>
+    </form>
 </div>
+
 
 </body>
 
