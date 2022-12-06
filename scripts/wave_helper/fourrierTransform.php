@@ -4,55 +4,38 @@ function Fourier($input, $isign)
     //$isign tells whether to get the fft or the inverse fft
     $data[0] = 0;
     for ($i = 0; $i < count($input); $i++) $data[($i + 1)] = $input[$i];
-
     $n = count($input);
-
     $j = 1;
-
     for ($i = 1; $i < $n; $i += 2) {
         if ($j > $i) {
             list($data[($j + 0)], $data[($i + 0)]) = array($data[($i + 0)], $data[($j + 0)]);
             list($data[($j + 1)], $data[($i + 1)]) = array($data[($i + 1)], $data[($j + 1)]);
         }
-
         $m = $n >> 1;
-
         while (($m >= 2) && ($j > $m)) {
             $j -= $m;
             $m = $m >> 1;
         }
-
         $j += $m;
-
     }
-
     $mmax = 2;
-
     while ($n > $mmax) {  # Outer loop executed log2(nn) times
         $istep = $mmax << 1;
-
         $theta = $isign * 2 * pi() / $mmax;
-
         $wtemp = sin(0.5 * $theta);
         $wpr = -2.0 * $wtemp * $wtemp;
         $wpi = sin($theta);
-
         $wr = 1.0;
         $wi = 0.0;
-        for ($m = 1; $m < $mmax; $m += 2) {  # Here are the two nested inner loops
+        for ($m = 1; $m < $mmax; $m += 2) {
             for ($i = $m; $i <= $n; $i += $istep) {
-
                 $j = $i + $mmax;
-
                 $tempr = $wr * $data[$j] - $wi * $data[($j + 1)];
                 $tempi = $wr * $data[($j + 1)] + $wi * $data[$j];
-
                 $data[$j] = $data[$i] - $tempr;
                 $data[($j + 1)] = $data[($i + 1)] - $tempi;
-
                 $data[$i] += $tempr;
                 $data[($i + 1)] += $tempi;
-
             }
             $wtemp = $wr;
             $wr = ($wr * $wpr) - ($wi * $wpi) + $wr;
@@ -60,15 +43,12 @@ function Fourier($input, $isign)
         }
         $mmax = $istep;
     }
-
     for ($i = 1; $i < count($data); $i++) {
         $data[$i] *= sqrt(2 / $n);                   # Normalize the data
-        if (abs($data[$i]) < 1E-8) $data[$i] = 0;  # Let's round small numbers to zero
-        $input[($i - 1)] = $data[$i];                # We need to shift array back (see beginning)
+        if (abs($data[$i]) < 1E-8) $data[$i] = 0;  # round small numbers to zero
+        $input[($i - 1)] = $data[$i];                # shift
     }
-
     return $input;
-
 }
 
 function padZeros($arr, $k)
@@ -114,8 +94,6 @@ function fftConvolution($x, $h)
     #trim y to output size
     $convolved_signal = array_slice($y, 0, $Ny);
     return $convolved_signal;
-
-
 }
 
 function write_waveform($filename, $input, $reduction)
