@@ -14,6 +14,8 @@
         to teach you about reverb convolution by letting
         you try it out with your own audio files.
     </p>
+    <p style="background-color:red;">NOTE: Uploaded audio files must be .wav format and less than 10 seconds long in
+        order to not exceed the upload limits of the web server</p>
 </div>
 <div id="upload">
     <fieldset>

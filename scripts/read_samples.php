@@ -45,7 +45,7 @@ file_put_contents("../wav_data.json", $json);
 
 ?>
 
-<body>
+<body onload="load_json_data()">
 <h1 class="welcome">VIEW</h1>
 <div class="audio_box">
     <h2>Impulse Response</h2>
@@ -56,13 +56,15 @@ file_put_contents("../wav_data.json", $json);
 
 <script>
 
-    fetch("../wav_data.json")
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-            log_data(data);
-        });
+    function load_json_data() {
+        fetch("../wav_data.json")
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                log_data(data);
+            });
+    }
 
 
     function log_data(data) {
